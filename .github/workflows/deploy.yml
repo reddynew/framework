@@ -1,4 +1,4 @@
-name: Deploy Airflow
+name: Deploy
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,9 +20,6 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         context: .
+        file: Dockerfile
         push: true
-        tags: your-dockerhub-username/your-image:latest
-
-    - name: Run Docker Compose
-      run: |
-        docker-compose up -d
+        tags: your-docker-repo/your-image:latest
