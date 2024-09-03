@@ -1,19 +1,12 @@
-# Use the official Airflow image from Apache
-FROM apache/airflow:2.7.0-python3.11
+# Use an official Airflow image as a base
+FROM apache/airflow:2.7.2-python3.8
 
-# Set environment variables for Airflow
-ENV AIRFLOW_HOME=/opt/airflow
+# Install additional dependencies
+RUN pip install boto3 pyyaml
 
-# Install any additional Python packages you need
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy your DAGs and configuration files
+COPY dags /opt/airflow/dags
+COPY config /opt/airflow/config
 
-# Copy your Airflow DAGs and configuration files into the container
-COPY dags/ ${AIRFLOW_HOME}/dags/
-COPY config/ ${AIRFLOW_HOME}/config/
-
-# Set the working directory to the Airflow home directory
-WORKDIR ${AIRFLOW_HOME}
-
-# Initialize Airflow database and start the Airflow webserver and scheduler
-CMD ["bash", "-c", "airflow db init && airflow webserver --daemon && airflow scheduler"]
+# Set the entrypoint for Airflow
+ENTRYPOINT ["airflow", "webserver"]
